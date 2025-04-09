@@ -7,7 +7,13 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+    <!-- <div class="quotes-box"> -->
+    <!-- Content inside quotes-box -->
+    <!-- </div> -->
     <div class="container">
+        <div class="header-controls">
+            <button id="darkModeToggle" class="dark-mode-toggle">🌙</button>
+        </div>
         <h1>Pomodoro Timer</h1>
         <div class="timer">
             <span id="minutes">50</span>:<span id="seconds">00</span>
@@ -16,8 +22,11 @@
             <button id="start">Iniciar</button>
             <button id="reset">Resetar</button>
             <button id="mode">Modo: Trabalho</button>
+            <button id="addTime" class="hidden">+10 min</button>
         </div>
     </div>
+    <audio id="tickSound" src="sounds/tick.mp3" preload="auto"></audio>
+    <audio id="alarmSound" src="sounds/alarm.mp3" preload="auto"></audio>
     <script src="script.js"></script>
 </body>
 </html> 

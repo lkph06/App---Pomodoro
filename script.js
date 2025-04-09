@@ -4,12 +4,55 @@ let isWorkMode = false; // Changed to false to start in break mode
 let isPaused = false;
 const WORK_TIME = 50 * 60; // 50 minutos em segundos
 const BREAK_TIME = 10 * 60; // 10 minutos em segundos
+const ADD_TIME = 10 * 60; // 10 minutos em segundos
 
 const minutesDisplay = document.getElementById('minutes');
 const secondsDisplay = document.getElementById('seconds');
 const startButton = document.getElementById('start');
 const resetButton = document.getElementById('reset');
 const modeButton = document.getElementById('mode');
+const addTimeButton = document.getElementById('addTime');
+const darkModeToggle = document.getElementById('darkModeToggle');
+const tickSound = document.getElementById('tickSound');
+const alarmSound = document.getElementById('alarmSound');
+// const quotesBox = document.querySelector('.quotes-box');
+const toggleQuotes = document.querySelector('.toggle-quotes');
+
+// Verifica se há preferência de tema salva
+const savedTheme = localStorage.getItem('theme');
+if (savedTheme) {
+    document.documentElement.setAttribute('data-theme', savedTheme);
+    updateDarkModeButton();
+}
+
+function updateDarkModeButton() {
+    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+    darkModeToggle.textContent = isDark ? '☀️' : '🌙';
+}
+
+function toggleDarkMode() {
+    const currentTheme = document.documentElement.getAttribute('data-theme');
+    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', newTheme);
+    localStorage.setItem('theme', newTheme);
+    updateDarkModeButton();
+}
+
+function playTickSound() {
+    if (tickSound) {
+        tickSound.currentTime = 0;
+        tickSound.volume = 0.1; // Volume baixo para o tick
+        tickSound.play().catch(e => console.log('Erro ao reproduzir som:', e));
+    }
+}
+
+function playAlarmSound() {
+    if (alarmSound) {
+        alarmSound.currentTime = 0;
+        alarmSound.volume = 0.5;
+        alarmSound.play().catch(e => console.log('Erro ao reproduzir alarme:', e));
+    }
+}
 
 function updateDisplay() {
     const minutes = Math.floor(timeLeft / 60);
@@ -23,6 +66,11 @@ function updateDisplay() {
     document.title = `${formattedMinutes}:${formattedSeconds} - Pomodoro Timer`;
 }
 
+function addTime() {
+    timeLeft += ADD_TIME;
+    updateDisplay();
+}
+
 function toggleTimer() {
     if (timerId === null) {
         // Start timer
@@ -30,15 +78,18 @@ function toggleTimer() {
             if (timeLeft > 0) {
                 timeLeft--;
                 updateDisplay();
+                playTickSound();
             } else {
                 clearInterval(timerId);
                 timerId = null;
-                document.title = 'Pomodoro Timer'; // Reset title when timer ends
+                document.title = 'Pomodoro Timer';
+                playAlarmSound();
                 alert('Tempo acabou!');
             }
         }, 1000);
         startButton.textContent = 'Pausar';
         startButton.classList.add('paused');
+        addTimeButton.classList.remove('hidden');
         isPaused = false;
     } else {
         // Pause timer
@@ -46,6 +97,7 @@ function toggleTimer() {
         timerId = null;
         startButton.textContent = 'Iniciar';
         startButton.classList.remove('paused');
+        addTimeButton.classList.add('hidden');
         isPaused = true;
     }
 }
@@ -61,6 +113,7 @@ function toggleMode() {
     modeButton.classList.toggle('break-mode', !isWorkMode);
     startButton.textContent = 'Iniciar';
     startButton.classList.remove('paused');
+    addTimeButton.classList.add('hidden');
     isPaused = false;
     updateDisplay();
 }
@@ -73,6 +126,7 @@ function resetTimer() {
     timeLeft = isWorkMode ? WORK_TIME : BREAK_TIME;
     startButton.textContent = 'Iniciar';
     startButton.classList.remove('paused');
+    addTimeButton.classList.add('hidden');
     isPaused = false;
     updateDisplay();
 }
@@ -80,6 +134,12 @@ function resetTimer() {
 startButton.addEventListener('click', toggleTimer);
 resetButton.addEventListener('click', resetTimer);
 modeButton.addEventListener('click', toggleMode);
+addTimeButton.addEventListener('click', addTime);
+darkModeToggle.addEventListener('click', toggleDarkMode);
+
+toggleQuotes.addEventListener('click', () => {
+    quotesBox.classList.toggle('collapsed');
+});
 
 // Inicializa o display
 updateDisplay();
