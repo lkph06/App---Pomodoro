@@ -14,8 +14,13 @@ const modeButton = document.getElementById('mode');
 function updateDisplay() {
     const minutes = Math.floor(timeLeft / 60);
     const seconds = timeLeft % 60;
-    minutesDisplay.textContent = minutes.toString().padStart(2, '0');
-    secondsDisplay.textContent = seconds.toString().padStart(2, '0');
+    const formattedMinutes = minutes.toString().padStart(2, '0');
+    const formattedSeconds = seconds.toString().padStart(2, '0');
+    minutesDisplay.textContent = formattedMinutes;
+    secondsDisplay.textContent = formattedSeconds;
+    
+    // Update page title with current time
+    document.title = `${formattedMinutes}:${formattedSeconds} - Pomodoro Timer`;
 }
 
 function toggleTimer() {
@@ -28,6 +33,7 @@ function toggleTimer() {
             } else {
                 clearInterval(timerId);
                 timerId = null;
+                document.title = 'Pomodoro Timer'; // Reset title when timer ends
                 alert('Tempo acabou!');
             }
         }, 1000);
