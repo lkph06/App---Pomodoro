@@ -76,6 +76,11 @@ button {
 }
 
 #start {
+    background: linear-gradient(135deg, #333333 0%, #000000 100%);
+    color: white;
+}
+
+#start.paused {
     background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
     color: white;
 }
